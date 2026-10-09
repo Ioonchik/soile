@@ -32,7 +32,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             SoileTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    val topic = remember { topics.random() }
+                    var topic by remember { mutableStateOf(topics.random()) }
                     var started by remember { mutableStateOf(false) }
                     var answerTime by remember { mutableIntStateOf(5) }
 
@@ -52,10 +52,18 @@ class MainActivity : ComponentActivity() {
                             }
                         } else {
                             Text(text="Time's up!")
-                            Button(onClick = {}) {
+                            Button(onClick = {
+                                answerTime = 5
+                                val previousTopic = topic
+                                while (topic == previousTopic) {
+                                    topic = topics.random()
+                                }
+                            }) {
                                 Text("NEXT TOPIC")
                             }
-                            Button(onClick = {}) {
+                            Button(onClick = {
+                                answerTime = 5
+                            }) {
                                 Text("AGAIN")
                             }
 
