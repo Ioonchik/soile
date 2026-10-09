@@ -32,9 +32,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             SoileTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    var started by remember { mutableStateOf(false) }
                     val topic = remember { topics.random() }
-                    var answerTime by remember { mutableIntStateOf(60) }
+                    var started by remember { mutableStateOf(false) }
+                    var answerTime by remember { mutableIntStateOf(5) }
 
                     Column(
                         modifier = Modifier.padding(innerPadding)
@@ -46,10 +46,19 @@ class MainActivity : ComponentActivity() {
                             Text(
                                 text = "Time left: $answerTime"
                             )
-                        } else {
+                        } else if (answerTime > 0) {
                             Button(onClick = { started = true }) {
                                 Text("START")
                             }
+                        } else {
+                            Text(text="Time's up!")
+                            Button(onClick = {}) {
+                                Text("NEXT TOPIC")
+                            }
+                            Button(onClick = {}) {
+                                Text("AGAIN")
+                            }
+
                         }
                     }
 
@@ -59,26 +68,11 @@ class MainActivity : ComponentActivity() {
                                 delay(1000)
                                 answerTime -= 1
                             }
+                            started = false
                         }
                     }
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Would you rather live without the Internet or without a car?",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    SoileTheme {
-        Greeting("Android")
     }
 }
