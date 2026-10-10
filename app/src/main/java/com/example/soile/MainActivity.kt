@@ -41,7 +41,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             SoileTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    var topic by remember { mutableStateOf(topics.random()) }
+                    val shuffledTopics = remember {topics.shuffled()}
+                    var topicNumber by remember { mutableIntStateOf(0) }
+                    val topic  = shuffledTopics[topicNumber]
                     var started by remember { mutableStateOf(false) }
                     var answerTime by remember { mutableIntStateOf(TALK_SECONDS) }
 
@@ -82,11 +84,8 @@ class MainActivity : ComponentActivity() {
                             )
                             Spacer(modifier = Modifier.height(16.dp))
                             Button(onClick = {
-                                answerTime = 5
-                                val previousTopic = topic
-                                while (topic == previousTopic) {
-                                    topic = topics.random()
-                                }
+                                answerTime = TALK_SECONDS
+                                topicNumber = (topicNumber + 1) % shuffledTopics.size
                             }) {
                                 Text("NEXT TOPIC")
                             }
