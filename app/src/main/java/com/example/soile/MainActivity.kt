@@ -9,9 +9,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -63,6 +65,11 @@ class MainActivity : ComponentActivity() {
                                 text = "$answerTime",
                                 fontSize = 72.sp,
                                 textAlign = TextAlign.Center
+                            )
+
+                            LinearProgressIndicator(
+                                modifier = Modifier.fillMaxWidth(),
+                                progress = {answerTime.toFloat() / TALK_SECONDS.toFloat()}
                             )
                         } else if (answerTime > 0) {
                             Button(onClick = { started = true }) {
