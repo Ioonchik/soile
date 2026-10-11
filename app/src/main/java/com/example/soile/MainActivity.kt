@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -29,6 +30,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.stylusHoverIcon
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -72,26 +74,26 @@ class MainActivity : ComponentActivity() {
                     ) {
                         Text(
                             text = "Soile",
-                            fontSize = 14.sp
+                            style = MaterialTheme.typography.bodyMedium
                         )
                         Text(
                             text = topic,
-                            fontSize = 28.sp,
+                            style = MaterialTheme.typography.headlineMedium,
                             textAlign = TextAlign.Center
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         if (started) {
                             Text(
                                 text = "Speak!",
-                                fontSize = 24.sp
+                                style = MaterialTheme.typography.titleLarge,
                             )
                             Text(
                                 text = "until the timer ends",
-                                fontSize = 18.sp
+                                style = MaterialTheme.typography.bodyMedium
                             )
                             Text(
                                 text = "$answerTime",
-                                fontSize = 72.sp,
+                                style = MaterialTheme.typography.displayLarge,
                                 textAlign = TextAlign.Center
                             )
 
@@ -101,7 +103,10 @@ class MainActivity : ComponentActivity() {
                             )
                         } else if (answerTime > 0) {
                             Button(onClick = { started = true }) {
-                                Text("START")
+                                Text(
+                                    "START",
+                                    style = MaterialTheme.typography.titleLarge
+                                )
                             }
                             TextButton(
                                 onClick = {
@@ -110,24 +115,33 @@ class MainActivity : ComponentActivity() {
                                     topicNumber = (topicNumber + 1) % shuffledTopics.size
                                 },
                                 enabled = skipsLeft > 0) {
-                                    Text("Skip ($skipsLeft)")
+                                    Text(
+                                        "Skip ($skipsLeft)",
+                                        style = MaterialTheme.typography.titleLarge
+                                    )
                             }
                         } else {
                             Text(
                                 text="Time's up!",
-                                fontSize = 28.sp,
+                                style = MaterialTheme.typography.titleLarge,
                             )
                             Spacer(modifier = Modifier.height(16.dp))
                             Button(onClick = {
                                 answerTime = TALK_SECONDS
                                 topicNumber = (topicNumber + 1) % shuffledTopics.size
                             }) {
-                                Text("NEXT TOPIC")
+                                Text(
+                                    "NEXT TOPIC",
+                                    style = MaterialTheme.typography.titleLarge,
+                                )
                             }
                             Button(onClick = {
                                 answerTime = TALK_SECONDS
                             }) {
-                                Text("AGAIN")
+                                Text(
+                                    "AGAIN",
+                                    style = MaterialTheme.typography.titleLarge
+                                )
                             }
 
                         }
