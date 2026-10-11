@@ -16,6 +16,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -33,6 +34,7 @@ import kotlinx.coroutines.delay
 import topics
 
 const val TALK_SECONDS = 5
+const val MAX_SKIPS = 3
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,6 +48,7 @@ class MainActivity : ComponentActivity() {
                     val topic  = shuffledTopics[topicNumber]
                     var started by remember { mutableStateOf(false) }
                     var answerTime by remember { mutableIntStateOf(TALK_SECONDS) }
+                    var skipsLeft by remember { mutableIntStateOf(MAX_SKIPS) }
 
                     Column(
                         modifier = Modifier.padding(innerPadding).padding(horizontal = 24.dp).fillMaxSize(),
@@ -77,6 +80,15 @@ class MainActivity : ComponentActivity() {
                             Button(onClick = { started = true }) {
                                 Text("START")
                             }
+                            TextButton(
+                                onClick = {
+                                    skipsLeft -= 1
+                                    answerTime = TALK_SECONDS
+                                    topicNumber = (topicNumber + 1) % shuffledTopics.size
+                                },
+                                enabled = skipsLeft > 0) {
+                                    Text("Skip ($skipsLeft)")
+                            }
                         } else {
                             Text(
                                 text="Time's up!",
@@ -90,7 +102,7 @@ class MainActivity : ComponentActivity() {
                                 Text("NEXT TOPIC")
                             }
                             Button(onClick = {
-                                answerTime = 5
+                                answerTime = TALK_SECONDS
                             }) {
                                 Text("AGAIN")
                             }
