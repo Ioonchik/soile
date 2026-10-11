@@ -5,6 +5,10 @@ import android.widget.Button
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.TweenSpec
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -50,8 +54,19 @@ class MainActivity : ComponentActivity() {
                     var answerTime by remember { mutableIntStateOf(TALK_SECONDS) }
                     var skipsLeft by remember { mutableIntStateOf(MAX_SKIPS) }
 
+                    val progress by animateFloatAsState(
+                        targetValue = if (started) (answerTime.toFloat() - 1) / TALK_SECONDS.toFloat() else 1f,
+                        animationSpec = tween(
+                            durationMillis = 1000,
+                            easing = LinearEasing
+                        ),
+                    )
+
                     Column(
-                        modifier = Modifier.padding(innerPadding).padding(horizontal = 24.dp).fillMaxSize(),
+                        modifier = Modifier
+                            .padding(innerPadding)
+                            .padding(horizontal = 24.dp)
+                            .fillMaxSize(),
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally
                     ) {
@@ -74,7 +89,7 @@ class MainActivity : ComponentActivity() {
 
                             LinearProgressIndicator(
                                 modifier = Modifier.fillMaxWidth(),
-                                progress = {answerTime.toFloat() / TALK_SECONDS.toFloat()}
+                                progress = { progress },
                             )
                         } else if (answerTime > 0) {
                             Button(onClick = { started = true }) {
