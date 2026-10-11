@@ -16,7 +16,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -76,76 +79,102 @@ class MainActivity : ComponentActivity() {
                             text = "Soile",
                             style = MaterialTheme.typography.bodyMedium
                         )
-                        Text(
-                            text = topic,
-                            style = MaterialTheme.typography.headlineMedium,
-                            textAlign = TextAlign.Center
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        if (started) {
-                            Text(
-                                text = "Speak!",
-                                style = MaterialTheme.typography.titleLarge,
-                            )
-                            Text(
-                                text = "until the timer ends",
-                                style = MaterialTheme.typography.bodyMedium
-                            )
-                            Text(
-                                text = "$answerTime",
-                                style = MaterialTheme.typography.displayLarge,
-                                textAlign = TextAlign.Center
-                            )
+                        Spacer(modifier = Modifier.weight(1f))
 
-                            LinearProgressIndicator(
-                                modifier = Modifier.fillMaxWidth(),
-                                progress = { progress },
-                            )
-                        } else if (answerTime > 0) {
-                            Button(onClick = { started = true }) {
+                        Card (
+                            shape = RoundedCornerShape(28.dp),
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+                        ) {
+                            Column(
+                                modifier = Modifier.padding(24.dp),
+                                horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally
+                            ) {
                                 Text(
-                                    "START",
-                                    style = MaterialTheme.typography.titleLarge
+                                    text = "Your topic",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                                Text(
+                                    text = topic,
+                                    style = MaterialTheme.typography.headlineMedium,
                                 )
                             }
-                            TextButton(
-                                onClick = {
-                                    skipsLeft -= 1
-                                    answerTime = TALK_SECONDS
-                                    topicNumber = (topicNumber + 1) % shuffledTopics.size
-                                },
-                                enabled = skipsLeft > 0) {
-                                    Text(
-                                        "Skip ($skipsLeft)",
-                                        style = MaterialTheme.typography.titleLarge
-                                    )
-                            }
-                        } else {
-                            Text(
-                                text="Time's up!",
-                                style = MaterialTheme.typography.titleLarge,
-                            )
-                            Spacer(modifier = Modifier.height(16.dp))
-                            Button(onClick = {
-                                answerTime = TALK_SECONDS
-                                topicNumber = (topicNumber + 1) % shuffledTopics.size
-                            }) {
+                        }
+                        Spacer(modifier = Modifier.weight(1f))
+
+                        Column(
+                            modifier = Modifier.padding(bottom = 32.dp).height(150.dp),
+                            verticalArrangement = Arrangement.Bottom,
+                            horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
+
+                        )
+                        {
+                            if (started) {
                                 Text(
-                                    "NEXT TOPIC",
+                                    text = "Speak!",
                                     style = MaterialTheme.typography.titleLarge,
                                 )
-                            }
-                            Button(onClick = {
-                                answerTime = TALK_SECONDS
-                            }) {
                                 Text(
-                                    "AGAIN",
-                                    style = MaterialTheme.typography.titleLarge
+                                    text = "until the timer ends",
+                                    style = MaterialTheme.typography.bodyMedium
                                 )
-                            }
+                                Text(
+                                    text = "$answerTime",
+                                    style = MaterialTheme.typography.displayLarge,
+                                    textAlign = TextAlign.Center
+                                )
 
+                                LinearProgressIndicator(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    progress = { progress },
+                                )
+                            } else if (answerTime > 0) {
+                                Button(onClick = { started = true }) {
+                                    Text(
+                                        "START",
+                                        style = MaterialTheme.typography.titleLarge
+                                    )
+                                }
+                                TextButton(
+                                    onClick = {
+                                        skipsLeft -= 1
+                                        answerTime = TALK_SECONDS
+                                        topicNumber = (topicNumber + 1) % shuffledTopics.size
+                                    },
+                                    enabled = skipsLeft > 0) {
+                                        Text(
+                                            "Skip ($skipsLeft)",
+                                            style = MaterialTheme.typography.titleLarge
+                                        )
+                                }
+                            } else {
+                                Text(
+                                    text="Time's up!",
+                                    style = MaterialTheme.typography.titleLarge,
+                                )
+                                Spacer(modifier = Modifier.height(16.dp))
+                                Button(onClick = {
+                                    answerTime = TALK_SECONDS
+                                    topicNumber = (topicNumber + 1) % shuffledTopics.size
+                                }) {
+                                    Text(
+                                        "NEXT TOPIC",
+                                        style = MaterialTheme.typography.titleLarge,
+                                    )
+                                }
+                                Button(onClick = {
+                                    answerTime = TALK_SECONDS
+                                }) {
+                                    Text(
+                                        "AGAIN",
+                                        style = MaterialTheme.typography.titleLarge
+                                    )
+                                }
+
+                            }
                         }
-                    }
+                        }
 
                     LaunchedEffect(started) {
                         if (started) {
