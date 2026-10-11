@@ -82,6 +82,14 @@ class MainActivity : ComponentActivity() {
                         Spacer(modifier = Modifier.height(16.dp))
                         if (started) {
                             Text(
+                                text = "Speak!",
+                                fontSize = 24.sp
+                            )
+                            Text(
+                                text = "until the timer ends",
+                                fontSize = 18.sp
+                            )
+                            Text(
                                 text = "$answerTime",
                                 fontSize = 72.sp,
                                 textAlign = TextAlign.Center
