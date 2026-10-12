@@ -134,6 +134,7 @@ class MainActivity : ComponentActivity() {
                                         .height(12.dp)
                                         .clip(RoundedCornerShape(6.dp)),
                                     progress = { progress },
+                                    drawStopIndicator = {},
                                 )
                             } else if (answerTime > 0) {
                                 Button(
