@@ -44,7 +44,7 @@ import com.example.soile.ui.theme.SoileTheme
 import kotlinx.coroutines.delay
 import topics
 
-const val TALK_SECONDS = 3
+const val TALK_SECONDS = 60
 const val MAX_SKIPS = 3
 
 class MainActivity : ComponentActivity() {
