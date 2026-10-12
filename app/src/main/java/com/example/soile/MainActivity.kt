@@ -22,6 +22,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -33,6 +34,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.pointer.stylusHoverIcon
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -42,7 +44,7 @@ import com.example.soile.ui.theme.SoileTheme
 import kotlinx.coroutines.delay
 import topics
 
-const val TALK_SECONDS = 5
+const val TALK_SECONDS = 3
 const val MAX_SKIPS = 3
 
 class MainActivity : ComponentActivity() {
@@ -95,16 +97,18 @@ class MainActivity : ComponentActivity() {
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.primary
                                 )
+                                Spacer(modifier = Modifier.height(8.dp))
                                 Text(
                                     text = topic,
                                     style = MaterialTheme.typography.headlineMedium,
+                                    textAlign = TextAlign.Center
                                 )
                             }
                         }
                         Spacer(modifier = Modifier.weight(1f))
 
                         Column(
-                            modifier = Modifier.padding(bottom = 32.dp).height(150.dp),
+                            modifier = Modifier.padding(bottom = 32.dp).height(200.dp),
                             verticalArrangement = Arrangement.Bottom,
                             horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
 
@@ -126,14 +130,21 @@ class MainActivity : ComponentActivity() {
                                 )
 
                                 LinearProgressIndicator(
-                                    modifier = Modifier.fillMaxWidth(),
+                                    modifier = Modifier.fillMaxWidth()
+                                        .height(12.dp)
+                                        .clip(RoundedCornerShape(6.dp)),
                                     progress = { progress },
                                 )
                             } else if (answerTime > 0) {
-                                Button(onClick = { started = true }) {
+                                Button(
+                                    modifier = Modifier.fillMaxWidth()
+                                        .height(64.dp),
+                                    shape = RoundedCornerShape(32.dp),
+                                    onClick = { started = true }
+                                ) {
                                     Text(
                                         "START",
-                                        style = MaterialTheme.typography.titleLarge
+                                        style = MaterialTheme.typography.titleLarge,
                                     )
                                 }
                                 TextButton(
@@ -145,7 +156,8 @@ class MainActivity : ComponentActivity() {
                                     enabled = skipsLeft > 0) {
                                         Text(
                                             "Skip ($skipsLeft)",
-                                            style = MaterialTheme.typography.titleLarge
+                                            style = MaterialTheme.typography.labelLarge,
+                                            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
                                         )
                                 }
                             } else {
@@ -154,21 +166,30 @@ class MainActivity : ComponentActivity() {
                                     style = MaterialTheme.typography.titleLarge,
                                 )
                                 Spacer(modifier = Modifier.height(16.dp))
-                                Button(onClick = {
-                                    answerTime = TALK_SECONDS
-                                    topicNumber = (topicNumber + 1) % shuffledTopics.size
-                                }) {
+                                Button(
+                                    modifier = Modifier.fillMaxWidth()
+                                        .height(64.dp),
+                                    shape = RoundedCornerShape(32.dp),
+                                    onClick = {
+                                        answerTime = TALK_SECONDS
+                                        topicNumber = (topicNumber + 1) % shuffledTopics.size
+                                    }
+                                ) {
                                     Text(
                                         "NEXT TOPIC",
                                         style = MaterialTheme.typography.titleLarge,
                                     )
                                 }
-                                Button(onClick = {
-                                    answerTime = TALK_SECONDS
-                                }) {
+                                Spacer(modifier = Modifier.height(8.dp))
+                                OutlinedButton(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    onClick = {
+                                        answerTime = TALK_SECONDS
+                                    }
+                                ) {
                                     Text(
                                         "AGAIN",
-                                        style = MaterialTheme.typography.titleLarge
+                                        style = MaterialTheme.typography.labelLarge
                                     )
                                 }
 
