@@ -1,10 +1,14 @@
 package com.example.soile
 
+import android.Manifest
 import android.os.Bundle
 import android.widget.Button
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContract
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.TweenSpec
 import androidx.compose.animation.core.animateFloatAsState
@@ -76,6 +80,17 @@ class MainActivity : ComponentActivity() {
                         ),
                     )
 
+                    var permissionDenied by remember { mutableStateOf(false) }
+                    val microphoneLauncher = rememberLauncherForActivityResult(
+                        ActivityResultContracts.RequestPermission()
+                    ) { isGranted ->
+                        if (isGranted) {
+                            state = SpeechState.SPEAKING
+                        } else {
+                            permissionDenied = true
+                        }
+                    }
+
                     Column(
                         modifier = Modifier
                             .padding(innerPadding)
@@ -127,7 +142,9 @@ class MainActivity : ComponentActivity() {
                                         modifier = Modifier.fillMaxWidth()
                                             .height(64.dp),
                                         shape = RoundedCornerShape(32.dp),
-                                        onClick = { state = SpeechState.SPEAKING }
+                                        onClick = {
+                                            microphoneLauncher.launch(Manifest.permission.RECORD_AUDIO)
+                                        }
                                     ) {
                                         Text(
                                             "START",
@@ -150,6 +167,12 @@ class MainActivity : ComponentActivity() {
                                             )
                                         )
                                     }
+                                    if (permissionDenied) {
+                                        Text(
+                                            text = "Permission for microphone was denied. We will not be able to analyze your speech"
+                                        )
+                                    }
+
                                 }
 
                                 SpeechState.SPEAKING -> {
