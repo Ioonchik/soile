@@ -45,6 +45,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.soile.ui.theme.SoileTheme
 import kotlinx.coroutines.delay
 import topics
@@ -66,15 +67,15 @@ class MainActivity : ComponentActivity() {
         setContent {
             SoileTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    val vm: SoileViewModel = viewModel()
+
                     val shuffledTopics = remember { topics.shuffled() }
                     var topicNumber by remember { mutableIntStateOf(0) }
                     val topic = shuffledTopics[topicNumber]
-                    var state by remember { mutableStateOf(SpeechState.READY) }
-                    var answerTime by remember { mutableIntStateOf(TALK_SECONDS) }
                     var skipsLeft by remember { mutableIntStateOf(MAX_SKIPS) }
 
                     val progress by animateFloatAsState(
-                        targetValue = if (state == SpeechState.SPEAKING) (answerTime.toFloat() - 1) / TALK_SECONDS.toFloat() else 1f,
+                        targetValue = if (vm.state == SpeechState.SPEAKING) (vm.answerTime.toFloat() - 1) / TALK_SECONDS.toFloat() else 1f,
                         animationSpec = tween(
                             durationMillis = 1000,
                             easing = LinearEasing
@@ -86,7 +87,7 @@ class MainActivity : ComponentActivity() {
                         ActivityResultContracts.RequestPermission()
                     ) { isGranted ->
                         if (isGranted) {
-                            state = SpeechState.SPEAKING
+                            vm.onStartClicked()
                         } else {
                             permissionDenied = true
                         }
@@ -137,7 +138,7 @@ class MainActivity : ComponentActivity() {
 
                             )
                         {
-                            when (state) {
+                            when (vm.state) {
                                 SpeechState.READY -> {
                                     Button(
                                         modifier = Modifier.fillMaxWidth()
@@ -155,7 +156,6 @@ class MainActivity : ComponentActivity() {
                                     TextButton(
                                         onClick = {
                                             skipsLeft -= 1
-                                            answerTime = TALK_SECONDS
                                             topicNumber = (topicNumber + 1) % shuffledTopics.size
                                         },
                                         enabled = skipsLeft > 0
@@ -186,7 +186,7 @@ class MainActivity : ComponentActivity() {
                                         style = MaterialTheme.typography.bodyMedium
                                     )
                                     Text(
-                                        text = "$answerTime",
+                                        text = "${vm.answerTime}",
                                         style = MaterialTheme.typography.displayLarge,
                                         textAlign = TextAlign.Center
                                     )
@@ -211,9 +211,8 @@ class MainActivity : ComponentActivity() {
                                             .height(64.dp),
                                         shape = RoundedCornerShape(32.dp),
                                         onClick = {
-                                            answerTime = TALK_SECONDS
                                             topicNumber = (topicNumber + 1) % shuffledTopics.size
-                                            state = SpeechState.READY
+                                            vm.onReady()
                                         }
                                     ) {
                                         Text(
@@ -225,8 +224,7 @@ class MainActivity : ComponentActivity() {
                                     OutlinedButton(
                                         modifier = Modifier.fillMaxWidth(),
                                         onClick = {
-                                            state = SpeechState.READY
-                                            answerTime = TALK_SECONDS
+                                            vm.onReady()
                                         }
                                     ) {
                                         Text(
@@ -235,20 +233,6 @@ class MainActivity : ComponentActivity() {
                                         )
                                     }
                                 }
-                            }
-                        }
-
-                        LaunchedEffect(state) {
-                            if (state == SpeechState.SPEAKING) {
-                                val startTime = SystemClock.elapsedRealtime()
-                                val totalMs = TALK_SECONDS * 1000
-                                while (true) {
-                                    val elapsedTime = SystemClock.elapsedRealtime() - startTime
-                                    answerTime = ((totalMs - elapsedTime).toInt() + 999 )/ 1000
-                                    if (answerTime <= 0) break
-                                    delay(1000)
-                                }
-                                state = SpeechState.FINISHED
                             }
                         }
                     }
