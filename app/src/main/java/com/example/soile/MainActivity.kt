@@ -2,6 +2,7 @@ package com.example.soile
 
 import android.Manifest
 import android.os.Bundle
+import android.os.SystemClock
 import android.widget.Button
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -48,7 +49,7 @@ import com.example.soile.ui.theme.SoileTheme
 import kotlinx.coroutines.delay
 import topics
 
-const val TALK_SECONDS = 3
+const val TALK_SECONDS = 60
 const val MAX_SKIPS = 3
 
 enum class SpeechState {
@@ -239,9 +240,13 @@ class MainActivity : ComponentActivity() {
 
                         LaunchedEffect(state) {
                             if (state == SpeechState.SPEAKING) {
-                                while (answerTime > 0) {
+                                val startTime = SystemClock.elapsedRealtime()
+                                val totalMs = TALK_SECONDS * 1000
+                                while (true) {
+                                    val elapsedTime = SystemClock.elapsedRealtime() - startTime
+                                    answerTime = ((totalMs - elapsedTime).toInt() + 999 )/ 1000
+                                    if (answerTime <= 0) break
                                     delay(1000)
-                                    answerTime -= 1
                                 }
                                 state = SpeechState.FINISHED
                             }
