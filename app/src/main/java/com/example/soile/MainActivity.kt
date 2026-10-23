@@ -69,11 +69,6 @@ class MainActivity : ComponentActivity() {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     val vm: SoileViewModel = viewModel()
 
-                    val shuffledTopics = remember { topics.shuffled() }
-                    var topicNumber by remember { mutableIntStateOf(0) }
-                    val topic = shuffledTopics[topicNumber]
-                    var skipsLeft by remember { mutableIntStateOf(MAX_SKIPS) }
-
                     val progress by animateFloatAsState(
                         targetValue = if (vm.state == SpeechState.SPEAKING) (vm.answerTime.toFloat() - 1) / TALK_SECONDS.toFloat() else 1f,
                         animationSpec = tween(
@@ -123,7 +118,7 @@ class MainActivity : ComponentActivity() {
                                 )
                                 Spacer(modifier = Modifier.height(8.dp))
                                 Text(
-                                    text = topic,
+                                    text = vm.topic,
                                     style = MaterialTheme.typography.headlineMedium,
                                     textAlign = TextAlign.Center
                                 )
@@ -155,13 +150,12 @@ class MainActivity : ComponentActivity() {
                                     }
                                     TextButton(
                                         onClick = {
-                                            skipsLeft -= 1
-                                            topicNumber = (topicNumber + 1) % shuffledTopics.size
+                                            vm.onSkipped()
                                         },
-                                        enabled = skipsLeft > 0
+                                        enabled = vm.skipsLeft > 0
                                     ) {
                                         Text(
-                                            "Skip ($skipsLeft)",
+                                            "Skip (${vm.skipsLeft})",
                                             style = MaterialTheme.typography.labelLarge,
                                             color = MaterialTheme.colorScheme.onBackground.copy(
                                                 alpha = 0.6f
@@ -211,8 +205,7 @@ class MainActivity : ComponentActivity() {
                                             .height(64.dp),
                                         shape = RoundedCornerShape(32.dp),
                                         onClick = {
-                                            topicNumber = (topicNumber + 1) % shuffledTopics.size
-                                            vm.onReady()
+                                            vm.onNextTopic()
                                         }
                                     ) {
                                         Text(
@@ -224,7 +217,7 @@ class MainActivity : ComponentActivity() {
                                     OutlinedButton(
                                         modifier = Modifier.fillMaxWidth(),
                                         onClick = {
-                                            vm.onReady()
+                                            vm.onAgain()
                                         }
                                     ) {
                                         Text(
